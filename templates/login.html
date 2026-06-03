@@ -1,0 +1,329 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIMaan AI | Secure Login</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #f7f4ea;
+        --card: rgba(255, 255, 255, 0.88);
+        --navy: #102a43;
+        --mint: #2dd4bf;
+        --mint-dark: #0f766e;
+        --gold: #d4a017;
+        --text: #1f2937;
+        --muted: #64748b;
+        --border: rgba(16, 42, 67, 0.12);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", sans-serif;
+        background:
+          radial-gradient(
+            circle at 15% 20%,
+            rgba(45, 212, 191, 0.22),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at 85% 80%,
+            rgba(212, 160, 23, 0.22),
+            transparent 34%
+          ),
+          linear-gradient(135deg, #f7f4ea, #ecfeff);
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 22px 14px;
+        overflow-x: hidden;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(16, 42, 67, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(16, 42, 67, 0.035) 1px, transparent 1px);
+        background-size: 42px 42px;
+        z-index: -1;
+      }
+
+      .login-card {
+        width: 100%;
+        max-width: 455px;
+        padding: 38px 34px;
+        border-radius: 30px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(22px);
+        box-shadow: 0 30px 80px rgba(16, 42, 67, 0.14);
+        animation: fadeUp 0.6s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .login-card::before {
+        content: "";
+        position: absolute;
+        width: 190px;
+        height: 190px;
+        top: -80px;
+        right: -80px;
+        border-radius: 50%;
+        background: rgba(45, 212, 191, 0.22);
+        z-index: -1;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .security-badge {
+        width: fit-content;
+        margin: 0 auto 16px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: #e8fff9;
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        color: var(--mint-dark);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .brand {
+        text-align: center;
+        font-size: 31px;
+        font-weight: 950;
+        color: var(--navy);
+        margin-bottom: 6px;
+      }
+
+      .brand span {
+        color: var(--gold);
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 24px;
+        line-height: 1.6;
+      }
+
+      .input-box {
+        margin-top: 16px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 12px;
+        color: var(--navy);
+        font-weight: 800;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 44px 14px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--text);
+        outline: none;
+        transition: 0.25s;
+      }
+
+      input:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.18);
+      }
+
+      .pass-wrap {
+        position: relative;
+      }
+
+      .toggle {
+        position: absolute;
+        right: 13px;
+        top: 41px;
+        cursor: pointer;
+        color: var(--mint-dark);
+        font-size: 12px;
+        font-weight: 900;
+        user-select: none;
+      }
+
+      .form-options {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 12px;
+        font-size: 13px;
+      }
+
+      .form-options a {
+        color: var(--mint-dark);
+        text-decoration: none;
+        font-weight: 900;
+      }
+
+      .btn-login {
+        width: 100%;
+        margin-top: 22px;
+        padding: 14px;
+        border: 0;
+        border-radius: 17px;
+        background: linear-gradient(135deg, var(--mint), var(--gold));
+        color: var(--navy);
+        font-weight: 950;
+        letter-spacing: 0.35px;
+        transition: 0.25s;
+      }
+
+      .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 35px rgba(15, 118, 110, 0.2);
+      }
+
+      .divider-text {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 24px 0 16px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .divider-text::before,
+      .divider-text::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: var(--border);
+      }
+
+      .btn-outline-auth {
+        display: block;
+        text-align: center;
+        padding: 12px;
+        border-radius: 15px;
+        text-decoration: none;
+        color: var(--mint-dark);
+        font-weight: 900;
+        font-size: 14px;
+        background: #e8fff9;
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        transition: 0.25s;
+      }
+
+      .btn-outline-auth:hover {
+        color: white;
+        background: var(--mint-dark);
+        transform: translateY(-1px);
+      }
+
+      .mini-note {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .alert {
+        border-radius: 15px;
+        font-size: 13px;
+        padding: 10px 12px;
+      }
+
+      @media (max-width: 480px) {
+        .login-card {
+          padding: 30px 22px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="login-card">
+      <div class="security-badge">🔒 Protected AIMaan Access</div>
+
+      <div class="brand">🧠 AIMaan <span>AI</span></div>
+      <div class="subtitle">Secure Cyber Fraud Intelligence Gateway</div>
+
+      {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+      {% endif %} {% if success %}
+      <div class="alert alert-success">{{ success }}</div>
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="input-box">
+          <label>Username</label>
+          <input
+            type="text"
+            name="username"
+            placeholder="Enter your username"
+            required
+          />
+        </div>
+
+        <div class="input-box pass-wrap">
+          <label>Password</label>
+          <input
+            type="password"
+            id="pass"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+          <span class="toggle" onclick="togglePass(this)">show</span>
+        </div>
+
+        <div class="form-options">
+          <a href="/accounts/forgot-password/">Forgot password?</a>
+        </div>
+
+        <button class="btn-login" type="submit">🔐 Login Securely</button>
+      </form>
+
+      <div class="divider-text">New to AIMaan?</div>
+
+      <a href="/accounts/signup/" class="btn-outline-auth"
+        >📝 Create New Account</a
+      >
+
+      <div class="mini-note">
+        AI-based fraud detection, OCR scanning, and explainable security
+        results.
+      </div>
+    </section>
+
+    <script>
+      function togglePass(el) {
+        const input = document.getElementById("pass");
+        input.type = input.type === "password" ? "text" : "password";
+        el.innerText = input.type === "password" ? "show" : "hide";
+      }
+    </script>
+  </body>
+</html>

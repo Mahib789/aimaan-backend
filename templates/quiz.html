@@ -1,0 +1,366 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<style>
+  :root {
+    --aimaan-bg: var(--bg);
+    --aimaan-card: var(--card);
+    --aimaan-card-2: var(--card-2);
+    --aimaan-navy: var(--navy);
+    --aimaan-mint: var(--mint);
+    --aimaan-mint-dark: var(--mint-dark);
+    --aimaan-gold: var(--gold);
+    --aimaan-text: var(--text);
+    --aimaan-muted: var(--muted);
+    --aimaan-border: var(--stroke);
+    --aimaan-shadow: var(--shadow);
+  }
+
+  .quiz-page-bg {
+    min-height: 100vh;
+    margin: -24px -12px 0;
+    padding: 38px 16px 55px;
+    background: var(--page-bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quiz-page-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+  }
+
+  .quiz-wrapper {
+    max-width: 950px;
+    margin: auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quiz-header,
+  .quiz-card,
+  .quiz-info,
+  .submit-panel {
+    background: var(--aimaan-card);
+    border: 1px solid var(--aimaan-border);
+    border-radius: 30px;
+    box-shadow: var(--aimaan-shadow);
+    backdrop-filter: blur(22px);
+    animation: fadeUp 0.6s ease;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .quiz-header {
+    text-align: center;
+    padding: 42px 28px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quiz-header::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    top: -90px;
+    right: -80px;
+    border-radius: 50%;
+    background: rgba(45, 212, 191, 0.22);
+    z-index: -1;
+  }
+
+  .quiz-header::after {
+    content: "";
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    bottom: -85px;
+    left: -85px;
+    border-radius: 50%;
+    background: rgba(212, 160, 23, 0.18);
+    z-index: -1;
+  }
+
+  .badge-ai {
+    display: inline-block;
+    padding: 9px 15px;
+    border-radius: 999px;
+    background: var(--soft-mint);
+    color: var(--aimaan-mint-dark);
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 13px;
+    border: 1px solid var(--aimaan-border);
+  }
+
+  .quiz-header h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 950;
+    color: var(--aimaan-navy);
+    letter-spacing: -1.2px;
+    line-height: 1.08;
+    margin-bottom: 12px;
+  }
+
+  .quiz-header h1 span {
+    color: var(--aimaan-gold);
+  }
+
+  .quiz-header p {
+    color: var(--aimaan-muted);
+    margin-bottom: 0;
+    line-height: 1.75;
+    font-size: 15px;
+  }
+
+  .quiz-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding: 18px;
+    margin-bottom: 22px;
+  }
+
+  .info-item {
+    padding: 14px;
+    border-radius: 18px;
+    background: var(--aimaan-card-2);
+    border: 1px solid var(--aimaan-border);
+    text-align: center;
+  }
+
+  .info-item strong {
+    display: block;
+    color: var(--aimaan-mint-dark);
+    font-size: 20px;
+    font-weight: 950;
+    margin-bottom: 4px;
+  }
+
+  .info-item span {
+    color: var(--aimaan-muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .quiz-card {
+    padding: 24px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: 0.25s;
+  }
+
+  .quiz-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 45px rgba(16, 42, 67, 0.13);
+    border-color: rgba(15, 118, 110, 0.2);
+  }
+
+  html[data-theme="dark"] .quiz-card:hover {
+    box-shadow: 0 22px 45px rgba(0, 0, 0, 0.28);
+  }
+
+  .question-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 17px;
+  }
+
+  .question-no {
+    min-width: 42px;
+    height: 42px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    background: var(--soft-mint);
+    color: var(--aimaan-mint-dark);
+    border: 1px solid var(--aimaan-border);
+    font-weight: 950;
+  }
+
+  .quiz-card h3 {
+    font-size: 19px;
+    font-weight: 900;
+    margin: 0;
+    color: var(--aimaan-navy);
+    line-height: 1.45;
+  }
+
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 14px 15px;
+    border-radius: 16px;
+    background: var(--aimaan-card-2);
+    border: 1px solid var(--aimaan-border);
+    cursor: pointer;
+    transition: 0.25s;
+    color: var(--aimaan-text);
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .option:hover {
+    background: var(--soft-mint);
+    border-color: rgba(15, 118, 110, 0.22);
+    transform: translateY(-1px);
+  }
+
+  .option input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--aimaan-mint-dark);
+    flex-shrink: 0;
+  }
+
+  .option:has(input:checked) {
+    background: var(--soft-mint);
+    border-color: rgba(15, 118, 110, 0.35);
+    box-shadow: 0 10px 22px rgba(15, 118, 110, 0.1);
+    color: var(--aimaan-navy);
+  }
+
+  .submit-panel {
+    padding: 18px;
+    margin-top: 8px;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 17px;
+    background: linear-gradient(135deg, var(--aimaan-mint), var(--aimaan-gold));
+    color: #102a43;
+    font-weight: 950;
+    letter-spacing: 0.35px;
+    transition: 0.25s;
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(15, 118, 110, 0.2);
+  }
+
+  .submit-note {
+    text-align: center;
+    color: var(--aimaan-muted);
+    font-size: 12px;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .quiz-page-bg {
+      margin: -18px -10px 0;
+      padding: 28px 12px 40px;
+    }
+
+    .quiz-header {
+      padding: 34px 20px;
+    }
+
+    .quiz-info {
+      grid-template-columns: 1fr;
+    }
+
+    .question-top {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="quiz-page-bg">
+  <div class="quiz-wrapper">
+    <section class="quiz-header">
+      <div class="badge-ai">🧠 AIMaan AI Security Quiz</div>
+
+      <h1>Test Your <span>Phishing Intelligence</span></h1>
+
+      <p>
+        Strengthen your cyber awareness by answering practical phishing and
+        fraud detection questions. Learn how attackers think and how AIMaan
+        identifies suspicious patterns.
+      </p>
+    </section>
+
+    <section class="quiz-info">
+      <div class="info-item">
+        <strong>{{ questions|length }}</strong>
+        <span>Total Questions</span>
+      </div>
+
+      <div class="info-item">
+        <strong>MCQ</strong>
+        <span>Question Format</span>
+      </div>
+
+      <div class="info-item">
+        <strong>AI</strong>
+        <span>Fraud Awareness</span>
+      </div>
+    </section>
+
+    <form method="POST" action="{% url 'quiz_result' %}">
+      {% csrf_token %} {% for q in questions %}
+      <div class="quiz-card">
+        <div class="question-top">
+          <div class="question-no">{{ forloop.counter }}</div>
+
+          <h3>{{ q.question }}</h3>
+        </div>
+
+        <div class="options">
+          {% for opt in q.options %}
+          <label class="option">
+            <input
+              type="radio"
+              name="q_{{ q.id }}"
+              value="{{ opt }}"
+              required
+            />
+            <span>{{ opt }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="submit-panel">
+        <button type="submit" class="btn-submit">🚀 Submit Quiz</button>
+
+        <div class="submit-note">
+          Your score will help you understand how well you can recognize
+          phishing, scam messages, and unsafe digital behavior.
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

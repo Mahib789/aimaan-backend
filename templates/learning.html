@@ -1,0 +1,588 @@
+{% extends "base.html" %} {% block content %}
+
+<style>
+  :root {
+    --aimaan-bg: var(--bg);
+    --aimaan-card: var(--card);
+    --aimaan-card-2: var(--card-2);
+    --aimaan-navy: var(--navy);
+    --aimaan-mint: var(--mint);
+    --aimaan-mint-dark: var(--mint-dark);
+    --aimaan-gold: var(--gold);
+    --aimaan-text: var(--text);
+    --aimaan-muted: var(--muted);
+    --aimaan-border: var(--stroke);
+    --aimaan-danger: var(--danger);
+    --aimaan-safe: var(--safe);
+    --aimaan-shadow: var(--shadow);
+  }
+
+  .learn-wrapper {
+    min-height: 100vh;
+    margin: -24px -12px 0;
+    padding: 38px 16px 55px;
+    background: var(--page-bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .learn-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+  }
+
+  .learn-page {
+    max-width: 1120px;
+    margin: auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .learn-hero,
+  .stat-box,
+  .learn-card,
+  .insight-box,
+  .timeline-box {
+    background: var(--aimaan-card);
+    border: 1px solid var(--aimaan-border);
+    border-radius: 30px;
+    box-shadow: var(--aimaan-shadow);
+    backdrop-filter: blur(22px);
+    animation: fadeUp 0.6s ease;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .learn-hero {
+    padding: 46px 34px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .learn-hero::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    top: -90px;
+    right: -80px;
+    border-radius: 50%;
+    background: rgba(45, 212, 191, 0.22);
+    z-index: -1;
+  }
+
+  .learn-hero::after {
+    content: "";
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    bottom: -85px;
+    left: -85px;
+    border-radius: 50%;
+    background: rgba(212, 160, 23, 0.18);
+    z-index: -1;
+  }
+
+  .badge-ai {
+    display: inline-block;
+    padding: 9px 15px;
+    border-radius: 999px;
+    background: var(--soft-mint);
+    border: 1px solid var(--aimaan-border);
+    color: var(--aimaan-mint-dark);
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 15px;
+  }
+
+  .learn-hero h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 950;
+    letter-spacing: -1.5px;
+    margin-bottom: 13px;
+    color: var(--aimaan-navy);
+    line-height: 1.08;
+  }
+
+  .learn-hero h1 span {
+    color: var(--aimaan-gold);
+  }
+
+  .learn-hero p {
+    max-width: 790px;
+    margin: auto;
+    color: var(--aimaan-muted);
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-box {
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-box::before {
+    content: "";
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    top: -45px;
+    right: -35px;
+    border-radius: 50%;
+    background: rgba(45, 212, 191, 0.18);
+  }
+
+  .stat-box .num {
+    font-size: 33px;
+    font-weight: 950;
+    color: var(--aimaan-mint-dark);
+    margin-bottom: 4px;
+  }
+
+  .stat-box .label {
+    color: var(--aimaan-muted);
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .learn-card {
+    padding: 25px;
+    transition: 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .learn-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(15, 118, 110, 0.22);
+    box-shadow: 0 22px 45px rgba(16, 42, 67, 0.13);
+  }
+
+  .learn-card h3 {
+    font-size: 21px;
+    font-weight: 950;
+    margin-bottom: 12px;
+    color: var(--aimaan-navy);
+  }
+
+  .learn-card p,
+  .learn-card li {
+    color: var(--aimaan-text);
+    line-height: 1.75;
+    font-size: 15px;
+  }
+
+  .learn-card ol,
+  .learn-card ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
+
+  .warning {
+    border-left: 6px solid var(--aimaan-gold);
+  }
+
+  .danger {
+    border-left: 6px solid var(--aimaan-danger);
+  }
+
+  .safe {
+    border-left: 6px solid var(--aimaan-safe);
+  }
+
+  .ai {
+    border-left: 6px solid var(--aimaan-mint-dark);
+  }
+
+  .code-box {
+    background: rgba(220, 38, 38, 0.06);
+    border: 1px solid rgba(220, 38, 38, 0.18);
+    color: var(--aimaan-danger);
+    border-radius: 17px;
+    padding: 16px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  html[data-theme="dark"] .code-box {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.24);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tags span {
+    display: inline-block;
+    padding: 8px 13px;
+    border-radius: 999px;
+    background: var(--soft-mint);
+    border: 1px solid var(--aimaan-border);
+    color: var(--aimaan-mint-dark);
+    font-size: 13px;
+    font-weight: 850;
+  }
+
+  .danger-tags span {
+    background: rgba(220, 38, 38, 0.06);
+    border-color: rgba(220, 38, 38, 0.13);
+    color: var(--aimaan-danger);
+  }
+
+  html[data-theme="dark"] .danger-tags span {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.24);
+  }
+
+  .insight-box {
+    margin-top: 24px;
+    padding: 34px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .insight-box::before {
+    content: "";
+    position: absolute;
+    width: 210px;
+    height: 210px;
+    right: -90px;
+    top: -90px;
+    border-radius: 50%;
+    background: rgba(45, 212, 191, 0.18);
+    z-index: -1;
+  }
+
+  .insight-box h2 {
+    font-weight: 950;
+    margin-bottom: 10px;
+    color: var(--aimaan-navy);
+  }
+
+  .insight-box p {
+    color: var(--aimaan-muted);
+    max-width: 780px;
+    margin: auto;
+    line-height: 1.75;
+  }
+
+  .flow {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .flow span {
+    padding: 11px 15px;
+    border-radius: 15px;
+    background: var(--aimaan-card-2);
+    border: 1px solid var(--aimaan-border);
+    color: var(--aimaan-navy);
+    font-weight: 900;
+    font-size: 13px;
+  }
+
+  .timeline-box {
+    margin-top: 24px;
+    padding: 30px;
+  }
+
+  .timeline-box h2 {
+    color: var(--aimaan-navy);
+    font-weight: 950;
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .timeline {
+    display: grid;
+    gap: 14px;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: 18px;
+    background: var(--aimaan-card-2);
+    border: 1px solid var(--aimaan-border);
+  }
+
+  .timeline-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    background: var(--soft-mint);
+    color: var(--aimaan-mint-dark);
+    font-weight: 950;
+    border: 1px solid var(--aimaan-border);
+  }
+
+  .timeline-item h4 {
+    color: var(--aimaan-navy);
+    font-size: 17px;
+    font-weight: 950;
+    margin-bottom: 5px;
+  }
+
+  .timeline-item p {
+    color: var(--aimaan-muted);
+    margin: 0;
+    line-height: 1.65;
+    font-size: 14px;
+  }
+
+  .final-note {
+    margin-top: 24px;
+    padding: 18px;
+    border-radius: 22px;
+    background: var(--soft-mint);
+    border: 1px solid var(--aimaan-border);
+    color: var(--aimaan-navy);
+    text-align: center;
+    font-weight: 800;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .learn-wrapper {
+      margin: -18px -10px 0;
+      padding: 26px 12px 40px;
+    }
+
+    .learn-hero {
+      padding: 34px 20px;
+    }
+
+    .learn-hero h1 {
+      font-size: 31px;
+    }
+
+    .stats-grid,
+    .topic-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .timeline-item {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="learn-wrapper">
+  <div class="learn-page">
+    <section class="learn-hero">
+      <div class="badge-ai">📘 AIMaan AI Learning Hub</div>
+
+      <h1>Master <span>Phishing & Fraud Detection</span></h1>
+
+      <p>
+        Learn how cyber attackers trick users through fake messages, OTP scams,
+        malicious links, prize frauds, and social engineering — and how AIMaan
+        AI detects suspicious behavior using Machine Learning, NLP, OCR, and
+        Explainable AI.
+      </p>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-box">
+        <div class="num">5+</div>
+        <div class="label">Security Topics</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="num">AI</div>
+        <div class="label">Powered Detection</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="num">XAI</div>
+        <div class="label">Explainable Results</div>
+      </div>
+    </section>
+
+    <section class="topic-grid">
+      <div class="learn-card">
+        <h3>🔐 What is Phishing?</h3>
+        <p>
+          Phishing is a cyber attack where attackers pretend to be trusted
+          organizations such as banks, delivery companies, universities, or
+          official services to steal passwords, OTPs, card details, or personal
+          data.
+        </p>
+      </div>
+
+      <div class="learn-card warning">
+        <h3>💀 How Phishing Works</h3>
+        <ol>
+          <li>Attacker sends a fake message or suspicious link.</li>
+          <li>User feels fear, urgency, greed, or pressure.</li>
+          <li>User clicks a malicious link or shares private details.</li>
+          <li>Account, OTP, money, or personal data is stolen.</li>
+        </ol>
+      </div>
+
+      <div class="learn-card danger">
+        <h3>🚨 Example Scam Message</h3>
+        <p class="code-box">
+          URGENT: Your bank account is suspended!<br />
+          Click http://fake-login.com<br />
+          Enter your OTP immediately.
+        </p>
+      </div>
+
+      <div class="learn-card warning">
+        <h3>⚠️ Common Red Flags</h3>
+        <div class="tags danger-tags">
+          <span>Urgent Language</span>
+          <span>Fake Links</span>
+          <span>OTP Request</span>
+          <span>Fear Tactics</span>
+          <span>Prize Scam</span>
+          <span>Account Blocked</span>
+        </div>
+      </div>
+
+      <div class="learn-card safe">
+        <h3>🛡️ Safety Rules</h3>
+        <ul>
+          <li>Never share OTP or password with anyone.</li>
+          <li>Check website spelling before login.</li>
+          <li>Avoid unknown links and shortened URLs.</li>
+          <li>Enable two-factor authentication where possible.</li>
+          <li>Verify bank or official messages from trusted sources.</li>
+        </ul>
+      </div>
+
+      <div class="learn-card ai">
+        <h3>🧠 How AI Helps</h3>
+        <p>
+          AIMaan AI uses Natural Language Processing and machine learning to
+          identify suspicious patterns, risky keywords, fake urgency, harmful
+          links, and scam-like behavior in English and Roman Urdu messages.
+        </p>
+      </div>
+    </section>
+
+    <section class="insight-box">
+      <h2>🤖 How AIMaan AI Works</h2>
+      <p>
+        AIMaan accepts message text or screenshot input, extracts text using
+        OCR, analyzes suspicious patterns using the AI model, calculates fraud
+        probability, and explains the final result using important words and
+        XAI-based reasoning.
+      </p>
+
+      <div class="flow">
+        <span>Message / Image</span>
+        <span>OCR</span>
+        <span>NLP</span>
+        <span>ML Model</span>
+        <span>Fraud Score</span>
+        <span>XAI Explanation</span>
+      </div>
+    </section>
+
+    <section class="timeline-box">
+      <h2>📌 Practical Fraud Awareness Flow</h2>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-icon">1</div>
+          <div>
+            <h4>Receive a Suspicious Message</h4>
+            <p>
+              The user receives a message asking for OTP, login details,
+              payment, or urgent account verification.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-icon">2</div>
+          <div>
+            <h4>Check Message in AIMaan</h4>
+            <p>
+              The user pastes the text or uploads a screenshot to analyze
+              whether the message is safe or fraudulent.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-icon">3</div>
+          <div>
+            <h4>Review AI + XAI Result</h4>
+            <p>
+              AIMaan shows the fraud probability and highlights suspicious
+              indicators behind the prediction.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-icon">4</div>
+          <div>
+            <h4>Take Safe Action</h4>
+            <p>
+              The user avoids clicking links, does not share OTP, verifies the
+              source, and reports the suspicious message.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="final-note">
+      ✅ AIMaan does not only detect fraud; it also educates users so they can
+      understand warning signs and make safer digital decisions.
+    </div>
+  </div>
+</div>
+
+{% endblock %}

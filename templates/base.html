@@ -1,0 +1,473 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AIMaan AI</title>
+
+    <script>
+      const savedTheme = localStorage.getItem("aimaan-theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    </script>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+
+    <style>
+      :root {
+        --bg: #f7f4ea;
+        --card: rgba(255, 255, 255, 0.88);
+        --card-2: #f8fafc;
+        --navy: #102a43;
+        --mint: #2dd4bf;
+        --mint-dark: #0f766e;
+        --gold: #d4a017;
+        --text: #1f2937;
+        --muted: #64748b;
+        --stroke: rgba(16, 42, 67, 0.12);
+        --safe: #0f766e;
+        --danger: #dc2626;
+        --shadow: 0 30px 80px rgba(16, 42, 67, 0.12);
+
+        --page-bg:
+          radial-gradient(
+            circle at 15% 20%,
+            rgba(45, 212, 191, 0.18),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at 85% 80%,
+            rgba(212, 160, 23, 0.18),
+            transparent 34%
+          ),
+          linear-gradient(135deg, #f7f4ea, #ecfeff);
+
+        --sidebar-bg: rgba(255, 255, 255, 0.86);
+        --grid-line: rgba(16, 42, 67, 0.035);
+        --soft-mint: #e8fff9;
+      }
+
+      html[data-theme="dark"] {
+        --bg: #050714;
+        --card: rgba(15, 23, 42, 0.88);
+        --card-2: rgba(30, 41, 59, 0.82);
+        --navy: #f8fafc;
+        --mint: #2dd4bf;
+        --mint-dark: #5eead4;
+        --gold: #facc15;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --stroke: rgba(255, 255, 255, 0.1);
+        --safe: #22c55e;
+        --danger: #f87171;
+        --shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+
+        --page-bg:
+          radial-gradient(
+            circle at 15% 20%,
+            rgba(45, 212, 191, 0.14),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at 85% 80%,
+            rgba(250, 204, 21, 0.12),
+            transparent 34%
+          ),
+          linear-gradient(135deg, #050714, #07111f);
+
+        --sidebar-bg: rgba(15, 23, 42, 0.92);
+        --grid-line: rgba(255, 255, 255, 0.035);
+        --soft-mint: rgba(45, 212, 191, 0.12);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--page-bg);
+        color: var(--text);
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--grid-line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+        background-size: 42px 42px;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 270px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        backdrop-filter: blur(24px);
+        border-right: 1px solid var(--stroke);
+        padding: 22px;
+        z-index: 1000;
+        transition: 0.35s ease;
+        box-shadow: 18px 0 45px rgba(16, 42, 67, 0.08);
+        display: flex;
+        flex-direction: column;
+      }
+
+      html[data-theme="dark"] .sidebar {
+        box-shadow: 18px 0 45px rgba(0, 0, 0, 0.32);
+      }
+
+      .brand-box {
+        padding: 18px 16px;
+        border-radius: 24px;
+        background: linear-gradient(
+          135deg,
+          var(--soft-mint),
+          rgba(255, 255, 255, 0.08)
+        );
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        margin-bottom: 22px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      html[data-theme="dark"] .brand-box {
+        border-color: rgba(94, 234, 212, 0.16);
+      }
+
+      .brand-box::before {
+        content: "";
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        top: -55px;
+        right: -45px;
+        border-radius: 50%;
+        background: rgba(45, 212, 191, 0.22);
+      }
+
+      .brand {
+        position: relative;
+        font-size: 25px;
+        font-weight: 950;
+        color: var(--navy);
+        line-height: 1.1;
+      }
+
+      .brand span {
+        color: var(--gold);
+      }
+
+      .brand-subtitle {
+        position: relative;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.45;
+      }
+
+      .theme-toggle {
+        margin-bottom: 18px;
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--stroke);
+        background: var(--card-2);
+        color: var(--navy);
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: 0.25s;
+      }
+
+      .theme-toggle:hover {
+        background: var(--soft-mint);
+        color: var(--mint-dark);
+        transform: translateY(-1px);
+      }
+
+      .nav-section-title {
+        margin: 8px 8px 10px;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 950;
+        letter-spacing: 1px;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--muted);
+        padding: 13px 14px;
+        border-radius: 16px;
+        transition: 0.25s ease;
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-size: 15px;
+        font-weight: 800;
+        background: transparent;
+      }
+
+      .nav-links a:hover {
+        background: var(--soft-mint);
+        color: var(--mint-dark);
+        transform: translateX(5px);
+        border-color: rgba(15, 118, 110, 0.14);
+      }
+
+      .nav-links a.active {
+        background: linear-gradient(
+          135deg,
+          rgba(45, 212, 191, 0.2),
+          rgba(212, 160, 23, 0.12)
+        );
+        color: var(--navy);
+        border-color: rgba(15, 118, 110, 0.18);
+        box-shadow: 0 12px 24px rgba(15, 118, 110, 0.08);
+      }
+
+      .nav-links a.active .nav-icon {
+        background: var(--mint-dark);
+        color: white;
+      }
+
+      html[data-theme="dark"] .nav-links a.active .nav-icon {
+        color: #06211d;
+      }
+
+      .nav-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: var(--card-2);
+        border: 1px solid var(--stroke);
+        color: var(--navy);
+        flex-shrink: 0;
+      }
+
+      .sidebar-bottom {
+        margin-top: auto;
+        padding-top: 14px;
+      }
+
+      .admin-link {
+        background: rgba(212, 160, 23, 0.12) !important;
+        color: var(--navy) !important;
+        border-color: rgba(212, 160, 23, 0.18) !important;
+      }
+
+      .logout {
+        color: var(--danger) !important;
+        background: rgba(220, 38, 38, 0.06) !important;
+        border-color: rgba(220, 38, 38, 0.1) !important;
+      }
+
+      .logout:hover {
+        background: rgba(220, 38, 38, 0.11) !important;
+        color: var(--danger) !important;
+      }
+
+      .mini-credit {
+        margin-top: 14px;
+        padding: 13px;
+        border-radius: 18px;
+        background: var(--card-2);
+        border: 1px solid var(--stroke);
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.55;
+        text-align: center;
+      }
+
+      .main {
+        margin-left: 270px;
+        padding: 30px;
+        min-height: 100vh;
+      }
+
+      .menu-toggle {
+        display: none;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 1200;
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        color: var(--navy);
+        font-size: 22px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 42, 67, 0.35);
+        backdrop-filter: blur(3px);
+        display: none;
+        z-index: 900;
+      }
+
+      .overlay.show {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .main {
+          margin-left: 0;
+          padding: 82px 16px 24px;
+        }
+
+        .menu-toggle {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <button
+      class="menu-toggle"
+      onclick="toggleSidebar()"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-box">
+        <div class="brand">🧠 AIMaan <span>AI</span></div>
+        <div class="brand-subtitle">Cyber Fraud Detection Platform</div>
+      </div>
+
+      <button class="theme-toggle" type="button" onclick="toggleTheme()">
+        <span id="themeLabel">Light Mode</span>
+        <span id="themeIcon">☀️</span>
+      </button>
+
+      <div class="nav-section-title">Main Menu</div>
+
+      <nav class="nav-links">
+        <a
+          href="/dashboard/"
+          class="{% if '/dashboard/' in request.path %}active{% endif %}"
+        >
+          <span class="nav-icon">🏠</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a
+          href="/learning/"
+          class="{% if '/learning/' in request.path %}active{% endif %}"
+        >
+          <span class="nav-icon">📘</span>
+          <span>Learning Module</span>
+        </a>
+
+        <a
+          href="/quiz/"
+          class="{% if '/quiz/' in request.path %}active{% endif %}"
+        >
+          <span class="nav-icon">🧠</span>
+          <span>Security Quiz</span>
+        </a>
+
+        {% if user.is_authenticated and user.is_staff %}
+        <a href="/admin/" class="admin-link">
+          <span class="nav-icon">⚙</span>
+          <span>Admin Panel</span>
+        </a>
+        {% endif %}
+      </nav>
+
+      <div class="sidebar-bottom">
+        <nav class="nav-links">
+          <a href="/accounts/logout/" class="logout">
+            <span class="nav-icon">⏻</span>
+            <span>Logout</span>
+          </a>
+        </nav>
+
+        <div class="mini-credit">
+          AIMaan AI · Explainable Fraud Detection System
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">{% block content %}{% endblock %}</main>
+
+    <script>
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+        document.getElementById("overlay").classList.toggle("show");
+      }
+
+      function updateThemeButton(theme) {
+        const label = document.getElementById("themeLabel");
+        const icon = document.getElementById("themeIcon");
+
+        if (!label || !icon) return;
+
+        if (theme === "dark") {
+          label.innerText = "Dark Mode";
+          icon.innerText = "🌙";
+        } else {
+          label.innerText = "Light Mode";
+          icon.innerText = "☀️";
+        }
+      }
+
+      function toggleTheme() {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme") || "light";
+
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("aimaan-theme", newTheme);
+        updateThemeButton(newTheme);
+      }
+
+      updateThemeButton(savedTheme);
+    </script>
+  </body>
+</html>

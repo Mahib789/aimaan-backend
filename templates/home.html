@@ -1,0 +1,991 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AIMaan AI | Fraud Detection</title>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #f7f4ea;
+        --card: rgba(255, 255, 255, 0.88);
+        --card-2: rgba(255, 255, 255, 0.74);
+        --navy: #102a43;
+        --mint: #2dd4bf;
+        --mint-dark: #0f766e;
+        --gold: #d4a017;
+        --text: #1f2937;
+        --muted: #64748b;
+        --border: rgba(16, 42, 67, 0.12);
+        --input: rgba(255, 255, 255, 0.9);
+        --danger: #dc2626;
+        --success: #059669;
+        --shadow: 0 30px 80px rgba(16, 42, 67, 0.14);
+      }
+
+      html[data-theme="dark"] {
+        --bg: #070907;
+        --card: rgba(18, 24, 22, 0.88);
+        --card-2: rgba(255, 255, 255, 0.07);
+        --navy: #f8fafc;
+        --mint: #2dd4bf;
+        --mint-dark: #5eead4;
+        --gold: #ffd166;
+        --text: #f3f4f6;
+        --muted: #a8b2c1;
+        --border: rgba(255, 209, 102, 0.18);
+        --input: rgba(0, 0, 0, 0.34);
+        --danger: #ff6b6b;
+        --success: #22c55e;
+        --shadow: 0 30px 90px rgba(0, 0, 0, 0.62);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background:
+          radial-gradient(
+            circle at 15% 20%,
+            rgba(45, 212, 191, 0.22),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at 85% 80%,
+            rgba(212, 160, 23, 0.22),
+            transparent 34%
+          ),
+          linear-gradient(135deg, var(--bg), #ecfeff);
+        color: var(--text);
+        overflow-x: hidden;
+      }
+
+      html[data-theme="dark"] body {
+        background:
+          radial-gradient(
+            circle at 15% 20%,
+            rgba(255, 209, 102, 0.18),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at 85% 80%,
+            rgba(45, 212, 191, 0.15),
+            transparent 34%
+          ),
+          linear-gradient(135deg, #070907, #101714);
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(16, 42, 67, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(16, 42, 67, 0.035) 1px, transparent 1px);
+        background-size: 42px 42px;
+        z-index: -1;
+      }
+
+      html[data-theme="dark"] body::after {
+        background-image:
+          linear-gradient(rgba(255, 209, 102, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(45, 212, 191, 0.035) 1px, transparent 1px);
+      }
+
+      .navbar-ai {
+        padding: 16px 40px;
+        border-bottom: 1px solid var(--border);
+        background: var(--card);
+        backdrop-filter: blur(22px);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .brand {
+        font-size: 23px;
+        font-weight: 950;
+        color: var(--navy);
+        letter-spacing: -0.5px;
+      }
+
+      .brand span {
+        color: var(--gold);
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .theme-toggle {
+        border: 1px solid var(--border);
+        background: var(--card-2);
+        color: var(--navy);
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 13px;
+        font-weight: 900;
+        cursor: pointer;
+        transition: 0.25s;
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(15, 118, 110, 0.16);
+      }
+
+      .btn-nav {
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 900;
+        text-decoration: none;
+        transition: 0.25s;
+      }
+
+      .btn-login-nav {
+        color: var(--mint-dark);
+        background: #e8fff9;
+        border: 1px solid rgba(15, 118, 110, 0.14);
+      }
+
+      html[data-theme="dark"] .btn-login-nav {
+        background: rgba(45, 212, 191, 0.11);
+      }
+
+      .btn-signup-nav {
+        color: var(--navy);
+        background: linear-gradient(135deg, var(--mint), var(--gold));
+        border: 0;
+      }
+
+      .page-wrapper {
+        max-width: 1120px;
+        margin: auto;
+        padding: 45px 20px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+        align-items: stretch;
+        margin-bottom: 24px;
+      }
+
+      .hero-box,
+      .info-box,
+      .main-card {
+        border: 1px solid var(--border);
+        background: var(--card);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(22px);
+        animation: fadeUp 0.6s ease;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-box {
+        padding: 36px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-box::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        right: -110px;
+        bottom: -110px;
+        border-radius: 50%;
+        background: rgba(45, 212, 191, 0.22);
+        z-index: -1;
+      }
+
+      html[data-theme="dark"] .hero-box::before {
+        background: rgba(255, 209, 102, 0.12);
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: #e8fff9;
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        color: var(--mint-dark);
+        font-size: 13px;
+        font-weight: 900;
+        margin-bottom: 16px;
+      }
+
+      html[data-theme="dark"] .hero-badge {
+        background: rgba(45, 212, 191, 0.11);
+      }
+
+      .hero h1 {
+        font-size: 43px;
+        line-height: 1.08;
+        font-weight: 950;
+        margin-bottom: 14px;
+        letter-spacing: -1px;
+        color: var(--navy);
+      }
+
+      .hero h1 span {
+        color: var(--mint-dark);
+      }
+
+      .hero p {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.8;
+        margin-bottom: 0;
+      }
+
+      .info-box {
+        padding: 24px;
+      }
+
+      .info-item {
+        display: flex;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .info-item:last-child {
+        border-bottom: none;
+      }
+
+      .info-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        background: #e8fff9;
+        color: var(--mint-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 18px;
+        border: 1px solid rgba(15, 118, 110, 0.12);
+      }
+
+      html[data-theme="dark"] .info-icon {
+        background: rgba(45, 212, 191, 0.11);
+      }
+
+      .info-item strong {
+        display: block;
+        font-size: 14px;
+        color: var(--navy);
+        margin-bottom: 3px;
+      }
+
+      .info-item span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .main-card {
+        padding: 30px;
+      }
+
+      .section-title {
+        font-size: 22px;
+        font-weight: 950;
+        margin-bottom: 6px;
+        color: var(--navy);
+      }
+
+      .section-subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 165px;
+        resize: vertical;
+        border-radius: 20px;
+        padding: 16px;
+        background: var(--input);
+        border: 1px solid var(--border);
+        color: var(--text);
+        outline: none;
+        transition: 0.25s;
+        line-height: 1.7;
+      }
+
+      textarea:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.18);
+      }
+
+      textarea::placeholder {
+        color: var(--muted);
+      }
+
+      .upload-box {
+        margin-top: 16px;
+        padding: 24px;
+        border: 1.6px dashed rgba(15, 118, 110, 0.28);
+        border-radius: 20px;
+        text-align: center;
+        cursor: pointer;
+        background: #f8fffd;
+        transition: 0.25s;
+      }
+
+      html[data-theme="dark"] .upload-box {
+        background: rgba(45, 212, 191, 0.08);
+      }
+
+      .upload-box:hover {
+        background: #e8fff9;
+        border-color: var(--mint-dark);
+        transform: translateY(-1px);
+      }
+
+      html[data-theme="dark"] .upload-box:hover {
+        background: rgba(45, 212, 191, 0.13);
+      }
+
+      .upload-box h6 {
+        margin: 0;
+        font-weight: 950;
+        color: var(--navy);
+      }
+
+      .upload-box p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      #preview {
+        display: none;
+        margin: 16px auto 0;
+        max-width: 100%;
+        max-height: 280px;
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        box-shadow: 0 16px 34px rgba(16, 42, 67, 0.12);
+      }
+
+      .action-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .btn-ai {
+        border: none;
+        border-radius: 17px;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, var(--mint), var(--gold));
+        color: var(--navy);
+        font-weight: 950;
+        transition: 0.25s;
+      }
+
+      .btn-ai:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 35px rgba(15, 118, 110, 0.2);
+      }
+
+      .btn-remove {
+        border-radius: 17px;
+        padding: 14px 18px;
+        font-weight: 900;
+        color: var(--mint-dark);
+        background: #e8fff9;
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        transition: 0.25s;
+      }
+
+      html[data-theme="dark"] .btn-remove {
+        background: rgba(45, 212, 191, 0.11);
+        color: var(--mint-dark);
+      }
+
+      .btn-remove:hover {
+        background: var(--mint-dark);
+        color: white;
+      }
+
+      .result {
+        margin-top: 26px;
+        padding: 24px;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: var(--card-2);
+      }
+
+      .result.fraud {
+        border-color: rgba(220, 38, 38, 0.38);
+        background: rgba(220, 38, 38, 0.08);
+      }
+
+      .result.safe {
+        border-color: rgba(5, 150, 105, 0.38);
+        background: rgba(5, 150, 105, 0.08);
+      }
+
+      .result-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .result-label {
+        font-size: 30px;
+        font-weight: 950;
+        margin: 0;
+        color: var(--navy);
+      }
+
+      .circle {
+        width: 125px;
+        height: 125px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 950;
+        font-size: 22px;
+        margin: auto;
+        color: var(--navy);
+        border: 7px solid rgba(255, 255, 255, 0.22);
+        box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.15);
+      }
+
+      .score-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .score-card,
+      .message-box {
+        padding: 15px;
+        border-radius: 18px;
+        background: var(--card);
+        border: 1px solid var(--border);
+      }
+
+      .score-card span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .score-card strong {
+        display: block;
+        font-size: 21px;
+        margin-top: 4px;
+        color: var(--navy);
+      }
+
+      .message-box {
+        color: var(--text);
+        line-height: 1.8;
+        font-size: 15px;
+        white-space: pre-wrap;
+      }
+
+      .fraud-keyword {
+        background: rgba(220, 38, 38, 0.92);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-weight: 900;
+      }
+
+      .chip {
+        display: inline-block;
+        padding: 8px 13px;
+        margin: 5px;
+        border-radius: 999px;
+        background: #e8fff9;
+        color: var(--mint-dark);
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      html[data-theme="dark"] .chip {
+        background: rgba(45, 212, 191, 0.1);
+      }
+
+      .reason-list {
+        margin-bottom: 0;
+        padding-left: 20px;
+        color: var(--text);
+        line-height: 1.8;
+      }
+
+      .loading {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 18px;
+        background: #e8fff9;
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        color: var(--mint-dark);
+        font-weight: 900;
+        text-align: center;
+      }
+
+      html[data-theme="dark"] .loading {
+        background: rgba(45, 212, 191, 0.1);
+      }
+
+      .empty-error {
+        margin-top: 20px;
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(220, 38, 38, 0.08);
+        border: 1px solid rgba(220, 38, 38, 0.25);
+        color: var(--danger);
+        font-weight: 850;
+      }
+
+      hr {
+        border-color: var(--border);
+        opacity: 1;
+      }
+
+      @media (max-width: 768px) {
+        .navbar-ai {
+          padding: 14px 18px;
+          gap: 14px;
+          flex-direction: column;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .hero h1 {
+          font-size: 32px;
+        }
+
+        .action-row,
+        .score-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .main-card,
+        .hero-box,
+        .info-box {
+          border-radius: 24px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar-ai d-flex justify-content-between align-items-center">
+      <div class="brand">🧠 AIMaan <span>AI</span></div>
+
+      <div class="nav-actions">
+        <button
+          class="theme-toggle"
+          type="button"
+          onclick="toggleTheme()"
+          id="themeBtn"
+        >
+          🌙 Dark
+        </button>
+
+        <a class="btn-nav btn-login-nav" href="/accounts/login/">Login</a>
+        <a class="btn-nav btn-signup-nav" href="/accounts/signup/">Signup</a>
+      </div>
+    </nav>
+
+    <main class="page-wrapper">
+      <section class="hero">
+        <div class="hero-box">
+          <div class="hero-badge">⚡ AI + OCR + XAI Detection</div>
+
+          <h1>Cyber Fraud & <span>Phishing Detection</span> System</h1>
+
+          <p>
+            Paste a suspicious message or upload a screenshot. AIMaan AI will
+            analyze fraud risk, safe score, important signals, and explain why
+            the message looks suspicious.
+          </p>
+        </div>
+
+        <div class="info-box">
+          <div class="info-item">
+            <div class="info-icon">🔍</div>
+            <div>
+              <strong>Smart Detection</strong>
+              <span>
+                Checks phishing, fraud, OTP scams, fake links, and risky words.
+              </span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">🖼️</div>
+            <div>
+              <strong>Image OCR</strong>
+              <span>
+                Upload screenshots and extract suspicious text automatically.
+              </span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">🧠</div>
+            <div>
+              <strong>Explainable AI</strong>
+              <span> Shows keywords and reasons behind prediction. </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="main-card">
+        {% csrf_token %}
+
+        <h2 class="section-title">Analyze Suspicious Content</h2>
+        <p class="section-subtitle">
+          Enter text manually or upload an image. You can use either one.
+        </p>
+
+        <textarea
+          id="text"
+          placeholder="Example: Your bank account has been blocked. Verify immediately at this link..."
+        ></textarea>
+
+        <div
+          class="upload-box"
+          onclick="document.getElementById('img').click()"
+        >
+          <h6>📤 Upload Screenshot for OCR</h6>
+          <p>
+            Click here to select an image containing suspicious message text
+          </p>
+
+          <input
+            type="file"
+            id="img"
+            hidden
+            accept="image/*"
+            onchange="preview(event)"
+          />
+
+          <img id="preview" alt="Uploaded image preview" />
+        </div>
+
+        <div class="action-row">
+          <button class="btn-ai" type="button" onclick="analyze()">
+            Analyze Message
+          </button>
+
+          <button class="btn-remove" type="button" onclick="removeImg()">
+            Remove Image
+          </button>
+        </div>
+
+        <div id="result"></div>
+      </section>
+    </main>
+
+    <script>
+      const savedTheme = localStorage.getItem("aimaan-theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      updateThemeButton(savedTheme);
+
+      function toggleTheme() {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("aimaan-theme", newTheme);
+        updateThemeButton(newTheme);
+      }
+
+      function updateThemeButton(theme) {
+        const btn = document.getElementById("themeBtn");
+        if (!btn) return;
+
+        if (theme === "dark") {
+          btn.innerText = "☀️ Light";
+        } else {
+          btn.innerText = "🌙 Dark";
+        }
+      }
+
+      function getCSRFToken() {
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+      }
+
+      function escapeHTML(value) {
+        return String(value || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function escapeRegExp(value) {
+        return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      function getKeywordList(data) {
+        const keywords = [];
+
+        (data.important_features || []).forEach(function (feature) {
+          const word = feature.word || feature.feature;
+
+          if (word && String(word).trim().length > 1) {
+            keywords.push(String(word).trim());
+          }
+        });
+
+        (data.reasons || []).forEach(function (reason) {
+          const matches = String(reason).match(/'([^']+)'|"([^"]+)"/g);
+
+          if (matches) {
+            matches.forEach(function (match) {
+              keywords.push(
+                match.replaceAll("'", "").replaceAll('"', "").trim(),
+              );
+            });
+          }
+        });
+
+        return [...new Set(keywords)].sort((a, b) => b.length - a.length);
+      }
+
+      function highlightMessage(message, data) {
+        let highlighted = escapeHTML(message);
+        const keywords = getKeywordList(data);
+
+        keywords.forEach(function (keyword) {
+          const regex = new RegExp("\\b" + escapeRegExp(keyword) + "\\b", "gi");
+
+          highlighted = highlighted.replace(
+            regex,
+            `<mark class="fraud-keyword">$&</mark>`,
+          );
+        });
+
+        return highlighted;
+      }
+
+      function preview(e) {
+        const file = e.target.files[0];
+        const img = document.getElementById("preview");
+
+        if (file) {
+          img.src = URL.createObjectURL(file);
+          img.style.display = "block";
+        }
+      }
+
+      function removeImg() {
+        document.getElementById("img").value = "";
+        document.getElementById("preview").style.display = "none";
+        document.getElementById("preview").src = "";
+      }
+
+      async function analyze() {
+        const text = document.getElementById("text").value.trim();
+        const file = document.getElementById("img").files[0];
+        const resultBox = document.getElementById("result");
+
+        if (!text && !file) {
+          resultBox.innerHTML = `
+          <div class="empty-error">
+            Please enter a message or upload an image first.
+          </div>
+        `;
+          return;
+        }
+
+        resultBox.innerHTML = `
+        <div class="loading">
+          Analyzing with AIMaan AI...
+        </div>
+      `;
+
+        try {
+          let res;
+
+          if (file) {
+            const fd = new FormData();
+            fd.append("image", file);
+
+            res = await fetch("/predict/", {
+              method: "POST",
+              headers: {
+                "X-CSRFToken": getCSRFToken(),
+              },
+              body: fd,
+            });
+          } else {
+            res = await fetch("/predict/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+              },
+              body: JSON.stringify({
+                text: text,
+              }),
+            });
+          }
+
+          const data = await res.json();
+
+          if (!res.ok || data.error) {
+            resultBox.innerHTML = `
+            <div class="result fraud">
+              <h4>${escapeHTML(data.error || "Something went wrong.")}</h4>
+            </div>
+          `;
+            return;
+          }
+
+          const fraud = Number(data.fraud * 100).toFixed(1);
+          const safe = Number(data.safe * 100).toFixed(1);
+          const isFraud = data.label === "FRAUD";
+          const mainColor = isFraud ? "#dc2626" : "#059669";
+
+          const analyzedMessage =
+            data.message_text || data.extracted_text || text || "";
+
+          const highlightedMessage = highlightMessage(analyzedMessage, data);
+
+          resultBox.innerHTML = `
+          <div class="result ${isFraud ? "fraud" : "safe"}">
+            <div class="result-header">
+              <div>
+                <p class="section-subtitle mb-1">Prediction Result</p>
+
+                <h3 class="result-label">
+                  ${isFraud ? "🚨 FRAUD DETECTED" : "✅ SAFE MESSAGE"}
+                </h3>
+
+                <p class="section-subtitle mb-0">
+                  Source: ${data.source === "image" ? "Image OCR" : "Text Input"}
+                </p>
+              </div>
+
+              <div class="circle"
+                style="background: conic-gradient(${mainColor} ${fraud}%, rgba(148,163,184,0.25) ${fraud}%);">
+                ${fraud}%
+              </div>
+            </div>
+
+            ${
+              data.extracted_text
+                ? `
+                  <hr class="my-4">
+                  <h5 class="fw-bold">Extracted OCR Text</h5>
+                  <div class="message-box">
+                    ${escapeHTML(data.extracted_text)}
+                  </div>
+                `
+                : ""
+            }
+
+            <hr class="my-4">
+
+            <h5 class="fw-bold">Analyzed Message</h5>
+            <div class="message-box">
+              ${highlightedMessage}
+            </div>
+
+            <div class="score-grid">
+              <div class="score-card">
+                <span>Fraud Risk</span>
+                <strong>${fraud}%</strong>
+              </div>
+
+              <div class="score-card">
+                <span>Safe Score</span>
+                <strong>${safe}%</strong>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <h5 class="fw-bold">Key Signals</h5>
+            <div>
+              ${
+                (data.important_features || []).length
+                  ? (data.important_features || [])
+                      .map(
+                        (f) =>
+                          `<span class="chip">${escapeHTML(f.word || f.feature)}</span>`,
+                      )
+                      .join("")
+                  : `<span class="text-secondary">No key signals returned.</span>`
+              }
+            </div>
+
+            <hr class="my-4">
+
+            <h5 class="fw-bold">Why AI decided this?</h5>
+            <ul class="reason-list">
+              ${
+                (data.reasons || []).length
+                  ? (data.reasons || [])
+                      .map((r) => `<li>${escapeHTML(r)}</li>`)
+                      .join("")
+                  : `<li>No explanation returned by model.</li>`
+              }
+            </ul>
+          </div>
+        `;
+        } catch (error) {
+          resultBox.innerHTML = `
+          <div class="result fraud">
+            <h4>Request failed.</h4>
+            <p>Please check your /predict/ backend view and try again.</p>
+          </div>
+        `;
+        }
+      }
+    </script>
+  </body>
+</html>

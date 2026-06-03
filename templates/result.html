@@ -1,0 +1,379 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<style>
+  :root {
+    --aimaan-bg: var(--bg);
+    --aimaan-card: var(--card);
+    --aimaan-card-2: var(--card-2);
+    --aimaan-navy: var(--navy);
+    --aimaan-mint: var(--mint);
+    --aimaan-mint-dark: var(--mint-dark);
+    --aimaan-gold: var(--gold);
+    --aimaan-text: var(--text);
+    --aimaan-muted: var(--muted);
+    --aimaan-border: var(--stroke);
+    --aimaan-danger: var(--danger);
+    --aimaan-safe: var(--safe);
+    --aimaan-shadow: var(--shadow);
+  }
+
+  .result-page-bg {
+    min-height: 100vh;
+    margin: -24px -12px 0;
+    padding: 38px 16px 55px;
+    background: var(--page-bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-page-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+  }
+
+  .result-wrapper {
+    max-width: 920px;
+    margin: auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .result-card {
+    background: var(--aimaan-card);
+    border: 1px solid var(--aimaan-border);
+    padding: 36px;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: var(--aimaan-shadow);
+    backdrop-filter: blur(22px);
+    animation: fadeUp 0.6s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    top: -90px;
+    right: -80px;
+    border-radius: 50%;
+    background: rgba(45, 212, 191, 0.22);
+    z-index: -1;
+  }
+
+  .result-card::after {
+    content: "";
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    bottom: -85px;
+    left: -85px;
+    border-radius: 50%;
+    background: rgba(212, 160, 23, 0.18);
+    z-index: -1;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .badge-ai {
+    display: inline-block;
+    padding: 9px 15px;
+    border-radius: 999px;
+    background: var(--soft-mint);
+    color: var(--aimaan-mint-dark);
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 14px;
+    border: 1px solid var(--aimaan-border);
+  }
+
+  .result-card h1 {
+    font-weight: 950;
+    margin-bottom: 10px;
+    color: var(--aimaan-navy);
+    letter-spacing: -0.8px;
+  }
+
+  .score-box {
+    font-size: 64px;
+    font-weight: 950;
+    margin: 12px 0;
+    color: var(--aimaan-mint-dark);
+    line-height: 1;
+  }
+
+  .score-box span {
+    font-size: 23px;
+    color: var(--aimaan-muted);
+  }
+
+  .score-progress {
+    max-width: 440px;
+    height: 11px;
+    border-radius: 999px;
+    background: rgba(16, 42, 67, 0.1);
+    overflow: hidden;
+    margin: 18px auto 20px;
+  }
+
+  html[data-theme="dark"] .score-progress {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .score-progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(135deg, var(--aimaan-mint), var(--aimaan-gold));
+    width: 0%;
+  }
+
+  .status-box {
+    max-width: 620px;
+    margin: 15px auto 25px;
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: var(--aimaan-card-2);
+    border: 1px solid var(--aimaan-border);
+    font-weight: 900;
+  }
+
+  .good {
+    color: var(--aimaan-safe);
+  }
+
+  .mid {
+    color: var(--aimaan-gold);
+  }
+
+  .bad {
+    color: var(--aimaan-danger);
+  }
+
+  .result-list {
+    text-align: left;
+    margin-top: 22px;
+  }
+
+  .item {
+    padding: 19px;
+    border-radius: 22px;
+    margin-bottom: 13px;
+    background: var(--aimaan-card-2);
+    border: 1px solid var(--aimaan-border);
+    transition: 0.25s;
+  }
+
+  .item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(16, 42, 67, 0.08);
+  }
+
+  html[data-theme="dark"] .item:hover {
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.28);
+  }
+
+  .item h4 {
+    font-size: 18px;
+    font-weight: 950;
+    margin-bottom: 12px;
+    color: var(--aimaan-navy);
+    line-height: 1.45;
+  }
+
+  .answer-row {
+    display: grid;
+    grid-template-columns: 145px 1fr;
+    gap: 10px;
+    margin-bottom: 7px;
+    color: var(--aimaan-text);
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  .answer-row b {
+    color: var(--aimaan-navy);
+  }
+
+  .ok,
+  .wrong {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-weight: 950;
+    font-size: 13px;
+  }
+
+  .ok {
+    color: var(--aimaan-safe);
+    background: rgba(15, 118, 110, 0.1);
+    border: 1px solid rgba(15, 118, 110, 0.14);
+  }
+
+  html[data-theme="dark"] .ok {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.2);
+  }
+
+  .wrong {
+    color: var(--aimaan-danger);
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.12);
+  }
+
+  html[data-theme="dark"] .wrong {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.2);
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .btn-action {
+    display: block;
+    padding: 15px;
+    border-radius: 17px;
+    text-decoration: none;
+    font-weight: 950;
+    transition: 0.25s;
+    text-align: center;
+  }
+
+  .btn-retry {
+    background: linear-gradient(135deg, var(--aimaan-mint), var(--aimaan-gold));
+    color: #102a43;
+  }
+
+  .btn-learn {
+    background: var(--soft-mint);
+    color: var(--aimaan-mint-dark);
+    border: 1px solid var(--aimaan-border);
+  }
+
+  .btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(15, 118, 110, 0.18);
+    text-decoration: none;
+  }
+
+  .btn-retry:hover {
+    color: #102a43;
+  }
+
+  .btn-learn:hover {
+    color: white;
+    background: var(--aimaan-mint-dark);
+  }
+
+  html[data-theme="dark"] .btn-learn:hover {
+    color: #06211d;
+  }
+
+  @media (max-width: 768px) {
+    .result-page-bg {
+      margin: -18px -10px 0;
+      padding: 28px 12px 40px;
+    }
+
+    .score-box {
+      font-size: 50px;
+    }
+
+    .result-card {
+      padding: 28px 18px;
+    }
+
+    .answer-row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+
+    .actions {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="result-page-bg">
+  <div class="result-wrapper">
+    <div class="result-card">
+      <div class="badge-ai">🧠 AIMaan AI Quiz Result</div>
+
+      <h1>Your Security Awareness Score</h1>
+
+      <div class="score-box">{{ score }} <span>/ {{ total }}</span></div>
+
+      <div class="score-progress">
+        <div
+          class="score-progress-fill"
+          style="width: {% widthratio score total 100 %}%"
+        ></div>
+      </div>
+
+      <div class="status-box">
+        {% if score == total %}
+        <p class="good mb-0">🏆 Perfect! Expert level phishing awareness.</p>
+        {% elif score >= 3 %}
+        <p class="mid mb-0">🚀 Good job! You understand phishing basics.</p>
+        {% else %}
+        <p class="bad mb-0">
+          ⚠ Keep learning. Review phishing red flags again.
+        </p>
+        {% endif %}
+      </div>
+
+      <div class="result-list">
+        {% for r in results %}
+        <div class="item">
+          <h4>Q{{ forloop.counter }}. {{ r.question }}</h4>
+
+          <div class="answer-row">
+            <b>Your Answer:</b>
+            <span>{{ r.selected }}</span>
+          </div>
+
+          <div class="answer-row">
+            <b>Correct Answer:</b>
+            <span>{{ r.correct }}</span>
+          </div>
+
+          {% if r.is_correct %}
+          <span class="ok">✔ Correct</span>
+          {% else %}
+          <span class="wrong">✘ Wrong</span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="actions">
+        <a href="/quiz/" class="btn-action btn-retry">🔁 Try Again</a>
+        <a href="/learning/" class="btn-action btn-learn">📘 Review Learning</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+# Environment files
+.env
+
+# Python
+*.pyc
+__pycache__/
+
+# Virtual environments
+venv/
+.venv/
+
+# Database
+db.sqlite3
+
+# Static and media
+staticfiles/
+media/
+
+# Logs
+*.log
+
+# Local generated files
+feedback.csv
+*.tmp
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

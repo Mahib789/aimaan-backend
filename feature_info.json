@@ -1,0 +1,7 @@
+{
+    "word_features": 6523,
+    "char_features": 3000,
+    "total_features": 9523,
+    "model": "XGBoost",
+    "xai": "SHAP"
+}
